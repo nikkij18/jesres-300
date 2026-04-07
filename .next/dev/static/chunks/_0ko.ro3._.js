@@ -130,9 +130,10 @@ function PaperUnravel() {
             className: "sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden px-4",
             children: [
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "relative w-full max-w-[90vw]",
+                    className: "relative",
                     style: {
-                        aspectRatio: '4/3',
+                        height: '70vh',
+                        aspectRatio: '1080/1350',
                         display: frameIdx === FRAMES.length - 1 ? 'none' : 'block'
                     },
                     children: FRAMES.slice(0, -1).map((src, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].img, {
@@ -171,32 +172,23 @@ function PaperUnravel() {
                     lineNumber: 93,
                     columnNumber: 9
                 }, this),
-                frameIdx === FRAMES.length - 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
-                    initial: {
-                        opacity: 0
-                    },
-                    animate: {
-                        opacity: 1
-                    },
-                    transition: {
-                        duration: 0.4
-                    },
+                frameIdx === FRAMES.length - 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     style: {
                         position: 'relative',
-                        width: '70vw',
-                        maxWidth: '700px'
+                        display: 'inline-block'
                     },
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
                             src: FRAMES[FRAMES.length - 1],
                             alt: "flat paper",
                             style: {
-                                width: '100%',
+                                height: '75vh',
+                                width: 'auto',
                                 display: 'block'
                             }
                         }, void 0, false, {
                             fileName: "[project]/components/PaperUnravel.tsx",
-                            lineNumber: 122,
+                            lineNumber: 116,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
@@ -205,13 +197,14 @@ function PaperUnravel() {
                             style: {
                                 position: 'absolute',
                                 width: '16%',
-                                top: '8%',
+                                top: '14%',
                                 left: '50%',
-                                transform: 'translateX(-50%)'
+                                transform: 'translateX(-50%)',
+                                zIndex: 20
                             }
                         }, void 0, false, {
                             fileName: "[project]/components/PaperUnravel.tsx",
-                            lineNumber: 131,
+                            lineNumber: 123,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
@@ -220,12 +213,13 @@ function PaperUnravel() {
                             style: {
                                 position: 'absolute',
                                 width: '14%',
-                                top: '8%',
-                                left: '17%'
+                                top: '14%',
+                                left: '8%',
+                                zIndex: 20
                             }
                         }, void 0, false, {
                             fileName: "[project]/components/PaperUnravel.tsx",
-                            lineNumber: 133,
+                            lineNumber: 125,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
@@ -234,12 +228,13 @@ function PaperUnravel() {
                             style: {
                                 position: 'absolute',
                                 width: '14%',
-                                top: '8%',
-                                right: '17%'
+                                top: '14%',
+                                right: '8%',
+                                zIndex: 20
                             }
                         }, void 0, false, {
                             fileName: "[project]/components/PaperUnravel.tsx",
-                            lineNumber: 135,
+                            lineNumber: 127,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
@@ -248,12 +243,13 @@ function PaperUnravel() {
                             style: {
                                 position: 'absolute',
                                 width: '14%',
-                                bottom: '10%',
-                                right: '17%'
+                                bottom: '14%',
+                                right: '8%',
+                                zIndex: 20
                             }
                         }, void 0, false, {
                             fileName: "[project]/components/PaperUnravel.tsx",
-                            lineNumber: 137,
+                            lineNumber: 129,
                             columnNumber: 13
                         }, this),
                         invitation && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -269,10 +265,10 @@ function PaperUnravel() {
                             },
                             style: {
                                 position: 'absolute',
-                                top: '45%',
+                                top: '38%',
                                 left: '50%',
                                 transform: 'translateX(-50%) rotate(-1deg)',
-                                width: '55%',
+                                width: '70%',
                                 color: '#2C2C2C',
                                 fontFamily: 'var(--font-typewriter), "Courier New", monospace',
                                 textAlign: 'center',
@@ -295,7 +291,7 @@ function PaperUnravel() {
                                     }) : ''
                                 }, void 0, false, {
                                     fileName: "[project]/components/PaperUnravel.tsx",
-                                    lineNumber: 158,
+                                    lineNumber: 150,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -308,7 +304,7 @@ function PaperUnravel() {
                                     children: invitation.Title
                                 }, void 0, false, {
                                     fileName: "[project]/components/PaperUnravel.tsx",
-                                    lineNumber: 163,
+                                    lineNumber: 155,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -321,7 +317,7 @@ function PaperUnravel() {
                                     children: invitation.Body
                                 }, void 0, false, {
                                     fileName: "[project]/components/PaperUnravel.tsx",
-                                    lineNumber: 166,
+                                    lineNumber: 158,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -336,13 +332,13 @@ function PaperUnravel() {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/PaperUnravel.tsx",
-                                    lineNumber: 169,
+                                    lineNumber: 161,
                                     columnNumber: 17
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/PaperUnravel.tsx",
-                            lineNumber: 141,
+                            lineNumber: 133,
                             columnNumber: 15
                         }, this)
                     ]
@@ -378,12 +374,12 @@ function PaperUnravel() {
                         children: "scroll to open"
                     }, void 0, false, {
                         fileName: "[project]/components/PaperUnravel.tsx",
-                        lineNumber: 180,
+                        lineNumber: 172,
                         columnNumber: 13
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/PaperUnravel.tsx",
-                    lineNumber: 178,
+                    lineNumber: 170,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AnimatePresence"], {
@@ -414,7 +410,7 @@ function PaperUnravel() {
                                     children: "save me a seat"
                                 }, void 0, false, {
                                     fileName: "[project]/components/PaperUnravel.tsx",
-                                    lineNumber: 204,
+                                    lineNumber: 196,
                                     columnNumber: 19
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -430,7 +426,7 @@ function PaperUnravel() {
                                     }
                                 }, void 0, false, {
                                     fileName: "[project]/components/PaperUnravel.tsx",
-                                    lineNumber: 207,
+                                    lineNumber: 199,
                                     columnNumber: 19
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -446,7 +442,7 @@ function PaperUnravel() {
                                     }
                                 }, void 0, false, {
                                     fileName: "[project]/components/PaperUnravel.tsx",
-                                    lineNumber: 215,
+                                    lineNumber: 207,
                                     columnNumber: 19
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -461,13 +457,13 @@ function PaperUnravel() {
                                     children: "I'll be there"
                                 }, void 0, false, {
                                     fileName: "[project]/components/PaperUnravel.tsx",
-                                    lineNumber: 223,
+                                    lineNumber: 215,
                                     columnNumber: 19
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/PaperUnravel.tsx",
-                            lineNumber: 203,
+                            lineNumber: 195,
                             columnNumber: 17
                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                             className: "text-sm italic",
@@ -482,17 +478,17 @@ function PaperUnravel() {
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/PaperUnravel.tsx",
-                            lineNumber: 232,
+                            lineNumber: 224,
                             columnNumber: 17
                         }, this)
                     }, "rsvp", false, {
                         fileName: "[project]/components/PaperUnravel.tsx",
-                        lineNumber: 195,
+                        lineNumber: 187,
                         columnNumber: 13
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/PaperUnravel.tsx",
-                    lineNumber: 193,
+                    lineNumber: 185,
                     columnNumber: 9
                 }, this)
             ]

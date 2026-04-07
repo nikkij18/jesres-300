@@ -90,7 +90,7 @@ export default function PaperUnravel() {
       <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden px-4">
 
         {/* ── SCROLL FRAMES (frames 0–4) ── */}
-        <div className="relative w-full max-w-[90vw]" style={{ aspectRatio: '4/3', display: frameIdx === FRAMES.length - 1 ? 'none' : 'block' }}>
+        <div className="relative" style={{ height: '70vh', aspectRatio: '1080/1350', display: frameIdx === FRAMES.length - 1 ? 'none' : 'block' }}>
           {FRAMES.slice(0, -1).map((src, i) => (
             <motion.img
               key={src}
@@ -112,29 +112,21 @@ export default function PaperUnravel() {
 
         {/* ── FINAL FRAME: paper + doodles + text, all one parent ── */}
         {frameIdx === FRAMES.length - 1 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4 }}
-            style={{ position: 'relative', width: '70vw', maxWidth: '700px' }}
-          >
-            {/* paper image — defines the container size */}
+          <div style={{ position: 'relative', display: 'inline-block' }}>
             <img
               src={FRAMES[FRAMES.length - 1]}
               alt="flat paper"
-              style={{ width: '100%', display: 'block' }}
+              style={{ height: '75vh', width: 'auto', display: 'block' }}
             />
 
-            {/* doodles — absolute children of same parent as paper img */}
-            {/* paper PNG has ~15% transparent padding on left/right, ~7% top/bottom */}
             {/* Chef (Doodle2) — top center */}
-            <img src={`${BASE}/Doodle2.png`} alt="" style={{ position: 'absolute', width: '16%', top: '8%', left: '50%', transform: 'translateX(-50%)' }} />
+            <img src={`${BASE}/Doodle2.png`} alt="" style={{ position: 'absolute', width: '16%', top: '14%', left: '50%', transform: 'translateX(-50%)', zIndex: 20 }} />
             {/* Bread legs (Doodle1) — top left */}
-            <img src={`${BASE}/Doodle1.png`} alt="" style={{ position: 'absolute', width: '14%', top: '8%', left: '17%' }} />
+            <img src={`${BASE}/Doodle1.png`} alt="" style={{ position: 'absolute', width: '14%', top: '14%', left: '8%', zIndex: 20 }} />
             {/* Cloche (Doodle3) — top right */}
-            <img src={`${BASE}/Doodle3.png`} alt="" style={{ position: 'absolute', width: '14%', top: '8%', right: '17%' }} />
+            <img src={`${BASE}/Doodle3.png`} alt="" style={{ position: 'absolute', width: '14%', top: '14%', right: '8%', zIndex: 20 }} />
             {/* Wine sipper (Doodle4) — bottom right */}
-            <img src={`${BASE}/Doodle4.png`} alt="" style={{ position: 'absolute', width: '14%', bottom: '10%', right: '17%' }} />
+            <img src={`${BASE}/Doodle4.png`} alt="" style={{ position: 'absolute', width: '14%', bottom: '14%', right: '8%', zIndex: 20 }} />
 
             {/* text — absolute, relative to the same parent */}
             {invitation && (
@@ -144,10 +136,10 @@ export default function PaperUnravel() {
                 transition={{ duration: 1, delay: 0.4 }}
                 style={{
                   position: 'absolute',
-                  top: '45%',
+                  top: '38%',
                   left: '50%',
                   transform: 'translateX(-50%) rotate(-1deg)',
-                  width: '55%',
+                  width: '70%',
                   color: '#2C2C2C',
                   fontFamily: 'var(--font-typewriter), "Courier New", monospace',
                   textAlign: 'center',
@@ -171,7 +163,7 @@ export default function PaperUnravel() {
                 </p>
               </motion.div>
             )}
-          </motion.div>
+          </div>
         )}
 
         {/* ── SCROLL PROMPT ── */}
