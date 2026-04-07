@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///Users/nikki/Personal%20Projects/jesres-300/app/page.tsx"],"sourcesContent":["'use client';\n\nexport default function HomePage() {\n  return (\n    <main className=\"min-h-screen flex items-center justify-center\">\n      <p style={{ color: 'var(--burgundy)', fontFamily: 'Georgia, serif', fontSize: '1.5rem' }}>\n        Dinner @ 300\n      </p>\n    </main>\n  );\n}\n"],"names":["HomePage","className","style","color","fontFamily","fontSize"],"mappings":";;;;;AAAA;;AAEe,SAASA;IACtB,qBACE,8OAAC;QAAKC,WAAU;kBACd,cAAA,8OAAC;YAAEC,OAAO;gBAAEC,OAAO;gBAAmBC,YAAY;gBAAkBC,UAAU;YAAS;sBAAG;;;;;;;;;;;AAKhG"}},
+    {"offset": {"line": 36, "column": 0}, "map": {"version":3,"sources":["file:///Users/nikki/Personal%20Projects/jesres-300/node_modules/next/src/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.ts"],"sourcesContent":["module.exports = (\n  require('../../module.compiled') as typeof import('../../module.compiled')\n).vendored['react-ssr']!.ReactJsxDevRuntime\n"],"names":["module","exports","require","vendored","ReactJsxDevRuntime"],"mappings":"AAAAA,OAAOC,OAAO,GACZC,QAAQ,4HACRC,QAAQ,CAAC,YAAY,CAAEC,kBAAkB","ignoreList":[0]}}]
+}

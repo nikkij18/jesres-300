@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+:root {
+  --parchment: #F5F5F0;
+  --burgundy: #6A0136;
+  --terracotta: #AF4319;
+  --slate: #2D728F;
+  --olive: #474B24;
+  --sand: #DFD6A7;
+}
+
+body {
+  background-color: var(--parchment);
+  color: var(--olive);
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
