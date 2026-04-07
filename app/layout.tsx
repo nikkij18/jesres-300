@@ -10,10 +10,15 @@ export const metadata: Metadata = {
   description: 'Jesres 300 — dinners, wine nights, and get-togethers.',
 };
 
+import NavBar from '@/components/NavBar';
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${specialElite.variable} ${caveat.variable}`}>
-      <body>{children}</body>
+      <body>
+        <NavBar />
+        {children}
+      </body>
     </html>
   );
 }

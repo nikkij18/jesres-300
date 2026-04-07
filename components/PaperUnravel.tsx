@@ -443,10 +443,21 @@ export default function PaperUnravel() {
                       </div>
                     </>
                   ) : (
-                    <div style={{ textAlign: 'center' }}>
+                    <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 'clamp(16px, 2vh, 28px)', alignItems: 'center' }}>
                       <p style={{ ...hw, fontSize: 'clamp(16px, 2vw, 30px)', color: '#6A0136', transform: 'rotate(-1deg)', display: 'inline-block' }}>
                         see you there, {rsvpName}
                       </p>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6em', alignItems: 'center' }}>
+                        <p style={{ ...tw, fontSize: 'clamp(7px, 0.75vw, 11px)', opacity: 0.35, letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+                          in the meantime
+                        </p>
+                        <a href="/zine" style={{ ...hw, fontSize: 'clamp(10px, 1vw, 15px)', color: '#2C2C2C', opacity: 0.6, textDecoration: 'none', borderBottom: '1px solid rgba(44,44,44,0.3)', paddingBottom: '1px' }}>
+                          read the zine →
+                        </a>
+                        <a href="/gallery" style={{ ...hw, fontSize: 'clamp(10px, 1vw, 15px)', color: '#2C2C2C', opacity: 0.6, textDecoration: 'none', borderBottom: '1px solid rgba(44,44,44,0.3)', paddingBottom: '1px' }}>
+                          past dinners →
+                        </a>
+                      </div>
                     </div>
                   )}
                 </div>
