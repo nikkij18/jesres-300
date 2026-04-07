@@ -16,21 +16,51 @@ interface Invitation {
   'Signed By': string;
 }
 
+const tw: React.CSSProperties = {
+  fontFamily: 'var(--font-typewriter), "Courier New", monospace',
+  color: '#2C2C2C',
+};
+
+const hw: React.CSSProperties = {
+  fontFamily: 'var(--font-handwritten), cursive',
+  color: '#2C2C2C',
+};
+
 export default function PaperUnravel() {
   const [frameIdx, setFrameIdx] = useState(0);
   const [showInvite, setShowInvite] = useState(false);
   const [invitation, setInvitation] = useState<Invitation | null>(null);
+  const [flipped, setFlipped] = useState(false);
+  const [flipEnabled, setFlipEnabled] = useState(false);
+  const [rsvpChecked, setRsvpChecked] = useState(false);
   const [rsvpName, setRsvpName] = useState('');
   const [rsvpNote, setRsvpNote] = useState('');
   const [saved, setSaved] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // preload frames
   useEffect(() => {
     FRAMES.forEach(src => { const img = new Image(); img.src = src; });
   }, []);
 
-  // fetch invitation from Supabase
+  useEffect(() => {
+    const audio = new Audio('/papercrumpling2.wav');
+    audio.preload = 'auto';
+    audioRef.current = audio;
+
+    // unlock audio on first user click
+    const unlock = () => {
+      audio.play().then(() => { audio.pause(); audio.currentTime = 0; }).catch(() => {});
+      window.removeEventListener('click', unlock);
+    };
+    window.addEventListener('click', unlock);
+
+    return () => {
+      audio.pause();
+      window.removeEventListener('click', unlock);
+    };
+  }, []);
+
   useEffect(() => {
     supabase
       .from('invitations')
@@ -49,7 +79,7 @@ export default function PaperUnravel() {
           });
         } else {
           setInvitation({
-            Title: 'You\'re invited',
+            Title: "You're invited",
             Body: 'Join us for an evening together.',
             Date: new Date().toISOString(),
             'Signed By': 'the host',
@@ -58,10 +88,8 @@ export default function PaperUnravel() {
       });
   }, []);
 
-  // scroll → frame
   useEffect(() => {
     window.scrollTo(0, 0);
-
     const onScroll = () => {
       const container = containerRef.current;
       if (!container) return;
@@ -70,14 +98,36 @@ export default function PaperUnravel() {
       const idx = Math.min(Math.floor(progress * FRAMES.length), FRAMES.length - 1);
       setFrameIdx(idx);
       setShowInvite(progress >= 1);
-    };
 
+      // play audio while paper is unraveling
+      const audio = audioRef.current;
+      if (audio) {
+        if (progress > 0 && progress < 1) {
+          if (audio.paused) audio.play().catch(() => {});
+        } else if (progress >= 1) {
+          audio.pause();
+          audio.currentTime = 0;
+        }
+      }
+    };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const handleRsvp = () => {
-    if (!rsvpName.trim()) return;
+  // enable flipping only after the invitation has been visible for 2 seconds
+  useEffect(() => {
+    if (showInvite) {
+      const t = setTimeout(() => setFlipEnabled(true), 400);
+      return () => clearTimeout(t);
+    } else {
+      setFlipEnabled(false);
+      setFlipped(false);
+    }
+  }, [showInvite]);
+
+  const handleRsvp = async () => {
+    if (!rsvpChecked || !rsvpName.trim()) return;
+    await supabase.from('rsvps').insert({ name: rsvpName.trim(), note: rsvpNote.trim() || null });
     setSaved(true);
   };
 
@@ -87,10 +137,26 @@ export default function PaperUnravel() {
       className="bg-black"
       style={{ height: `${100 + TOTAL_SCROLL_VH}vh` }}
     >
+      {/* SVG filter for hand-drawn look */}
+      <svg id="rough-filter" style={{ position: 'absolute', width: 0, height: 0 }}>
+        <defs>
+          <filter id="rough">
+            <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.2" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </defs>
+      </svg>
       <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden px-4">
 
-        {/* ── SCROLL FRAMES (frames 0–4) ── */}
-        <div className="relative" style={{ height: '70vh', aspectRatio: '1080/1350', display: frameIdx === FRAMES.length - 1 ? 'none' : 'block' }}>
+        {/* ── SCROLL FRAMES ── */}
+        <div
+          className="relative"
+          style={{
+            height: '95vh',
+            aspectRatio: '1080/1350',
+            display: frameIdx === FRAMES.length - 1 ? 'none' : 'block',
+          }}
+        >
           {FRAMES.slice(0, -1).map((src, i) => (
             <motion.img
               key={src}
@@ -98,71 +164,296 @@ export default function PaperUnravel() {
               alt=""
               className="absolute inset-0 w-full h-full object-contain"
               style={{ opacity: i === frameIdx ? 1 : 0 }}
-              animate={i === 0 && frameIdx === 0
-                ? { rotate: [0, -4, 4, -2, 2, 0] }
-                : { rotate: 0 }
-              }
+              animate={i === 0 && frameIdx === 0 ? { rotate: [0, -4, 4, -2, 2, 0] } : { rotate: 0 }}
               transition={i === 0 && frameIdx === 0
                 ? { duration: 4, repeat: Infinity, ease: 'easeInOut' }
-                : { duration: 0.3 }
-              }
+                : { duration: 0.3 }}
             />
           ))}
         </div>
 
-        {/* ── FINAL FRAME: paper + doodles + text, all one parent ── */}
+        {/* ── FINAL FRAME: flip card ── */}
         {frameIdx === FRAMES.length - 1 && (
-          <div style={{ position: 'relative', display: 'inline-block' }}>
-            <img
-              src={FRAMES[FRAMES.length - 1]}
-              alt="flat paper"
-              style={{ height: '75vh', width: 'auto', display: 'block' }}
-            />
+          <div
+            style={{
+              display: 'table',
+              perspective: '1400px',
+            }}
+            onMouseEnter={() => flipEnabled && setFlipped(true)}
+            onMouseLeave={() => setFlipped(false)}
+          >
+            {/* flip inner */}
+            <div
+              style={{
+                position: 'relative',
+                transformStyle: 'preserve-3d',
+                transition: 'transform 0.75s cubic-bezier(0.4, 0.2, 0.2, 1)',
+                transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+              }}
+            >
+              {/* ── FRONT ── */}
+              <div style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}>
+                <img
+                  src={FRAMES[FRAMES.length - 1]}
+                  alt="flat paper"
+                  style={{ height: '100vh', width: 'auto', display: 'block' }}
+                />
 
-            {/* Chef (Doodle2) — top center */}
-            <img src={`${BASE}/Doodle2.png`} alt="" style={{ position: 'absolute', width: '16%', top: '14%', left: '50%', transform: 'translateX(-50%)', zIndex: 20 }} />
-            {/* Bread legs (Doodle1) — top left */}
-            <img src={`${BASE}/Doodle1.png`} alt="" style={{ position: 'absolute', width: '14%', top: '14%', left: '8%', zIndex: 20 }} />
-            {/* Cloche (Doodle3) — top right */}
-            <img src={`${BASE}/Doodle3.png`} alt="" style={{ position: 'absolute', width: '14%', top: '14%', right: '8%', zIndex: 20 }} />
-            {/* Wine sipper (Doodle4) — bottom right */}
-            <img src={`${BASE}/Doodle4.png`} alt="" style={{ position: 'absolute', width: '14%', bottom: '14%', right: '8%', zIndex: 20 }} />
+                {/* Doodles */}
+                <img src={`${BASE}/Doodle1.png`} alt="" style={{ position: 'absolute', width: '18%', top: '25%', left: '20%', zIndex: 20 }} />
+                <img src={`${BASE}/Doodle2.png`} alt="" style={{ position: 'absolute', width: '22%', top: '22%', left: '34%', zIndex: 21 }} />
+                <img src={`${BASE}/Doodle3.png`} alt="" style={{ position: 'absolute', width: '18%', top: '23%', left: '53%', zIndex: 20 }} />
+                <img src={`${BASE}/Doodle4.png`} alt="" style={{ position: 'absolute', width: '17%', top: '27%', left: '69%', zIndex: 20 }} />
 
-            {/* text — absolute, relative to the same parent */}
-            {invitation && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1, delay: 0.4 }}
+                {/* Invitation text */}
+                {invitation && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1, delay: 0.4 }}
+                    style={{
+                      position: 'absolute',
+                      top: '43%',
+                      left: '50%',
+                      transform: 'translateX(-50%) rotate(-1deg)',
+                      width: '70%',
+                      color: '#2C2C2C',
+                      fontFamily: 'var(--font-typewriter), "Courier New", monospace',
+                      textAlign: 'center',
+                      overflowWrap: 'break-word',
+                      pointerEvents: 'none',
+                    }}
+                  >
+                    <p style={{ fontSize: 'clamp(7px, 0.8vw, 12px)', letterSpacing: '0.18em', marginBottom: '0.8em', opacity: 0.4, textTransform: 'uppercase' }}>
+                      {invitation.Date
+                        ? new Date(invitation.Date.replace(' ', 'T')).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
+                        : ''}
+                    </p>
+                    <p style={{ fontSize: 'clamp(14px, 2.2vw, 32px)', fontWeight: 'bold', marginBottom: '0.8em', lineHeight: 1.15 }}>
+                      {invitation.Title}
+                    </p>
+                    <p style={{ fontSize: 'clamp(9px, 0.85vw, 14px)', marginBottom: '1.2em', opacity: 0.8, lineHeight: 1.8 }}>
+                      {invitation.Body}
+                    </p>
+                    <p style={{ fontSize: 'clamp(7px, 0.8vw, 12px)', opacity: 0.45, fontStyle: 'italic' }}>
+                      — {invitation['Signed By']}
+                    </p>
+                  </motion.div>
+                )}
+
+                {/* Flip prompt */}
+                <AnimatePresence>
+                  {showInvite && !flipped && (
+                    <motion.button
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: [0.4, 0.9, 0.4] }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                      style={{
+                        position: 'absolute',
+                        bottom: '6%',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontFamily: 'var(--font-handwritten), cursive',
+                        fontSize: 'clamp(10px, 1.1vw, 16px)',
+                        color: '#555',
+                        letterSpacing: '0.05em',
+                        zIndex: 30,
+                      }}
+                    >
+                      flip over →
+                    </motion.button>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* ── BACK: same paper, RSVP side ── */}
+              <div
                 style={{
                   position: 'absolute',
-                  top: '38%',
-                  left: '50%',
-                  transform: 'translateX(-50%) rotate(-1deg)',
-                  width: '70%',
-                  color: '#2C2C2C',
-                  fontFamily: 'var(--font-typewriter), "Courier New", monospace',
-                  textAlign: 'center',
-                  overflowWrap: 'break-word',
-                  pointerEvents: 'none',
+                  inset: 0,
+                  backfaceVisibility: 'hidden',
+                  WebkitBackfaceVisibility: 'hidden',
+                  transform: 'rotateY(180deg)',
                 }}
               >
-                <p style={{ fontSize: 'clamp(7px, 0.8vw, 12px)', letterSpacing: '0.18em', marginBottom: '0.8em', opacity: 0.4, textTransform: 'uppercase' }}>
-                  {invitation.Date
-                    ? new Date(invitation.Date.replace(' ', 'T')).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
-                    : ''}
-                </p>
-                <p style={{ fontSize: 'clamp(14px, 2.2vw, 32px)', fontWeight: 'bold', marginBottom: '0.8em', lineHeight: 1.15 }}>
-                  {invitation.Title}
-                </p>
-                <p style={{ fontSize: 'clamp(9px, 0.85vw, 14px)', marginBottom: '1.2em', opacity: 0.8, lineHeight: 1.8 }}>
-                  {invitation.Body}
-                </p>
-                <p style={{ fontSize: 'clamp(7px, 0.8vw, 12px)', opacity: 0.45, fontStyle: 'italic' }}>
-                  — {invitation['Signed By']}
-                </p>
-              </motion.div>
-            )}
+                <img
+                  src={FRAMES[FRAMES.length - 1]}
+                  alt="paper back"
+                  style={{ height: '100vh', width: 'auto', display: 'block' }}
+                />
+                <div style={{
+                  position: 'absolute',
+                  inset: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  paddingBottom: '8%',
+                  boxSizing: 'border-box',
+                  transform: 'scaleX(-1)',
+                }}><div style={{ transform: 'scaleX(-1)', width: '100%', display: 'flex', justifyContent: 'center' }}>
+                <div style={{ width: '60%', display: 'flex', flexDirection: 'column', gap: 'clamp(12px, 2vh, 28px)' }}>
+
+                  {!saved ? (
+                    <>
+                      {/* header */}
+                      <div>
+                        <p style={{ ...tw, fontSize: 'clamp(18px, 2.2vw, 34px)', fontWeight: '700', transform: 'rotate(-1deg)', display: 'block', marginBottom: '0.2em', textAlign: 'center' }}>
+                          RSVP
+                        </p>
+                        <p style={{ ...tw, fontSize: 'clamp(10px, 1vw, 15px)', opacity: 0.5, transform: 'rotate(-0.5deg)', textAlign: 'center' }}>
+                          please return by Friday
+                        </p>
+                      </div>
+
+                      {/* are you in? */}
+                      {/* are you in? */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.7em', userSelect: 'none', position: 'relative' }}>
+                        <div
+                          onMouseDown={e => { e.stopPropagation(); setRsvpChecked(c => !c); }}
+                          style={{
+                            width: 'clamp(14px, 1.6vw, 24px)',
+                            height: 'clamp(14px, 1.6vw, 24px)',
+                            border: '2px solid #555',
+                            borderRadius: '2px',
+                            flexShrink: 0,
+                            position: 'relative',
+                            cursor: 'pointer',
+                            WebkitTapHighlightColor: 'transparent',
+                          }}
+                        >
+                          {rsvpChecked && (
+                            <svg
+                              viewBox="0 0 36 36"
+                              pointerEvents="none"
+                              style={{
+                                position: 'absolute',
+                                width: 'clamp(20px, 2vw, 30px)',
+                                height: 'clamp(20px, 2vw, 30px)',
+                                top: '25%',
+                                left: '70%',
+                                transform: 'translate(-50%, -50%)',
+                                overflow: 'visible',
+                                pointerEvents: 'none',
+                              }}
+                            >
+                              <motion.path
+                                d="M4,19 Q8,22 13,29 Q20,18 32,7"
+                                fill="none"
+                                stroke="#6A0136"
+                                strokeWidth="2.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                style={{ filter: 'url(#rough)' }}
+                                initial={{ pathLength: 0 }}
+                                animate={{ pathLength: 1 }}
+                                transition={{ duration: 0.45, ease: 'easeOut' }}
+                              />
+                            </svg>
+                          )}
+                        </div>
+                        <span
+                          onMouseDown={e => { e.stopPropagation(); setRsvpChecked(c => !c); }}
+                          style={{ ...tw, fontSize: 'clamp(11px, 1.1vw, 17px)', cursor: 'pointer' }}
+                        >
+                          yes, i&apos;ll be there
+                        </span>
+                      </div>
+
+                      {/* name line */}
+                      <div style={{ display: 'flex', alignItems: 'flex-end', gap: '0.5em' }}>
+                        <span style={{ ...tw, fontSize: 'clamp(10px, 1vw, 15px)', opacity: 0.55, paddingBottom: '3px', whiteSpace: 'nowrap' }}>
+                          signed,
+                        </span>
+                        <input
+                          type="text"
+                          value={rsvpName}
+                          onChange={e => setRsvpName(e.target.value)}
+                          onKeyDown={e => e.key === 'Enter' && handleRsvp()}
+                          placeholder="sign here"
+                          style={{
+                            ...hw,
+                            flex: 1,
+                            background: 'transparent',
+                            border: 'none',
+                            borderBottom: '1.5px solid #888',
+                            outline: 'none',
+                            fontSize: 'clamp(10px, 1.1vw, 17px)',
+                            paddingBottom: '2px',
+                            caretColor: '#6A0136',
+                          }}
+                        />
+                      </div>
+
+                      {/* note line */}
+                      <div style={{ display: 'flex', alignItems: 'flex-end', gap: '0.5em' }}>
+                        <span style={{ ...tw, fontSize: 'clamp(8px, 0.85vw, 13px)', opacity: 0.55, paddingBottom: '3px', whiteSpace: 'nowrap' }}>
+                          leave a note,
+                        </span>
+                        <input
+                          type="text"
+                          value={rsvpNote}
+                          onChange={e => setRsvpNote(e.target.value)}
+                          onKeyDown={e => e.key === 'Enter' && handleRsvp()}
+                          placeholder="(optional)"
+                          style={{
+                            ...hw,
+                            flex: 1,
+                            background: 'transparent',
+                            border: 'none',
+                            borderBottom: '1.5px solid #888',
+                            outline: 'none',
+                            fontSize: 'clamp(10px, 1.1vw, 17px)',
+                            paddingBottom: '2px',
+                            caretColor: '#6A0136',
+                          }}
+                        />
+                      </div>
+
+                      {/* submit row */}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span style={{
+                            fontFamily: 'var(--font-typewriter), monospace',
+                            fontSize: 'clamp(8px, 0.8vw, 12px)',
+                            color: '#aaa',
+                            letterSpacing: '0.1em',
+                          }}
+                        >
+                          hover off to go back
+                        </span>
+                        <button
+                          onClick={handleRsvp}
+                          disabled={!rsvpChecked || !rsvpName.trim()}
+                          style={{
+                            ...tw,
+                            fontSize: 'clamp(11px, 1.2vw, 18px)',
+                            color: rsvpChecked && rsvpName.trim() ? '#6A0136' : '#bbb',
+                            background: 'transparent',
+                            border: 'none',
+                            cursor: rsvpChecked && rsvpName.trim() ? 'pointer' : 'default',
+                            padding: 0,
+                            transition: 'color 0.2s',
+                          }}
+                        >
+                          send in →
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div style={{ textAlign: 'center' }}>
+                      <p style={{ ...hw, fontSize: 'clamp(16px, 2vw, 30px)', color: '#6A0136', transform: 'rotate(-1deg)', display: 'inline-block' }}>
+                        see you there, {rsvpName}
+                      </p>
+                    </div>
+                  )}
+                </div>
+                </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -178,54 +469,6 @@ export default function PaperUnravel() {
             >
               scroll to open
             </motion.p>
-          )}
-        </AnimatePresence>
-
-        {/* ── RSVP ── */}
-        <AnimatePresence>
-          {showInvite && (
-            <motion.div
-              key="rsvp"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.5, ease: 'easeOut' }}
-              className="flex flex-col items-center text-center mt-5 w-full max-w-xs"
-            >
-              {!saved ? (
-                <div className="space-y-3 w-full">
-                  <p className="text-xs tracking-[0.15em] uppercase" style={{ color: '#666', fontFamily: 'Georgia, serif' }}>
-                    save me a seat
-                  </p>
-                  <input
-                    type="text"
-                    placeholder="your name"
-                    value={rsvpName}
-                    onChange={e => setRsvpName(e.target.value)}
-                    className="w-full border-b bg-transparent text-sm py-1.5 outline-none placeholder:text-white/20"
-                    style={{ borderColor: '#444', color: '#e8e8d0', fontFamily: 'Georgia, serif' }}
-                  />
-                  <input
-                    type="text"
-                    placeholder="a note (optional)"
-                    value={rsvpNote}
-                    onChange={e => setRsvpNote(e.target.value)}
-                    className="w-full border-b bg-transparent text-sm py-1.5 outline-none placeholder:text-white/20"
-                    style={{ borderColor: '#444', color: '#e8e8d0', fontFamily: 'Georgia, serif' }}
-                  />
-                  <button
-                    onClick={handleRsvp}
-                    className="mt-2 text-sm tracking-widest uppercase py-2 px-6 transition-all hover:opacity-70"
-                    style={{ color: 'white', backgroundColor: '#6A0136', fontFamily: 'Georgia, serif', letterSpacing: '0.15em' }}
-                  >
-                    I'll be there
-                  </button>
-                </div>
-              ) : (
-                <p className="text-sm italic" style={{ color: '#c8c8b8', fontFamily: 'Georgia, serif' }}>
-                  see you there, {rsvpName}. ✦
-                </p>
-              )}
-            </motion.div>
           )}
         </AnimatePresence>
 

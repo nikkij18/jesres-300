@@ -19,3 +19,14 @@ body {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+
+@keyframes drawCheck {
+  to { stroke-dashoffset: 0; }
+}
+
+/* inline SVG filter for hand-drawn checkmark */
+#rough-filter {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
